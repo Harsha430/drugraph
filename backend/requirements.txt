@@ -11,5 +11,6 @@ langchain
 langchain-community
 langchain-groq
 langchain-neo4j
+langchain-huggingface
 numpy
 gunicorn

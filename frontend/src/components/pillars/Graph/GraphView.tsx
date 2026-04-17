@@ -1,11 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import ForceGraph2D from 'react-force-graph-2d';
 import { useQuery } from '@tanstack/react-query';
 import { useAppStore } from '../../../store';
 import { api } from '../../../services/api';
 import { 
   Maximize2, 
-  Layers, 
   MousePointer2, 
   Activity,
   Filter,

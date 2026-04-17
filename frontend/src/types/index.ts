@@ -87,7 +87,7 @@ export interface GraphData {
   links: GraphEdge[];
 }
 
-export type PillarView = 'search' | 'assistant' | 'safety' | 'graph' | 'alternatives';
+export type PillarView = 'landing' | 'search' | 'assistant' | 'safety' | 'graph' | 'alternatives';
 
 export interface Toast {
   id: string;

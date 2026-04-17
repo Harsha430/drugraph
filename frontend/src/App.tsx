@@ -9,6 +9,8 @@ import { AssistantView } from './components/pillars/Assistant/AssistantView';
 import { SafetyView } from './components/pillars/Safety/SafetyView';
 import { GraphView } from './components/pillars/Graph/GraphView';
 import AlternativesView from './components/pillars/Alternatives/AlternativesView';
+import LandingPage from './components/pillars/Landing/LandingPage';
+import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const { activeView } = useAppStore();
@@ -30,6 +32,16 @@ function App() {
     }
   };
 
+  if (activeView === 'landing') {
+    return (
+      <div className="h-full w-full bg-void overflow-hidden relative">
+        <div className="scanline-overlay" />
+        <LandingPage />
+        <ToastContainer />
+      </div>
+    );
+  }
+
   return (
     <div className="h-full w-full flex bg-void overflow-hidden relative">
       <div className="scanline-overlay" />
@@ -40,7 +52,18 @@ function App() {
       <main className="flex-1 flex flex-col min-w-0 relative z-0">
         <TopBar />
         <div className="flex-1 overflow-hidden flex flex-col">
-          {renderActiveView()}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeView}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.25 }}
+              className="flex-1 flex flex-col overflow-hidden"
+            >
+              {renderActiveView()}
+            </motion.div>
+          </AnimatePresence>
         </div>
       </main>
 

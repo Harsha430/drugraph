@@ -32,7 +32,7 @@ interface AppState {
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
-  activeView: 'search',
+  activeView: 'landing',
   watchlist: [],
   activeDrug: null,
   checkerDrugs: [],

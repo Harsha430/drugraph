@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '../../../store';
 import { api } from '../../../services/api';
-import type { Message, SourceKnowledge, VectorSnippet } from '../../../types';
+import type { Message, SourceKnowledge } from '../../../types';
 
 export function AssistantView() {
   const { chatHistory, addMessage, clearChat } = useAppStore();

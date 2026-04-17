@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAppStore } from '../../../store';
 import { api } from '../../../services/api';
-import { AlertTriangle, ShieldCheck, Info, X, Loader2, Activity, Play } from 'lucide-react';
+import { AlertTriangle, ShieldCheck, X, Loader2, Activity, Play } from 'lucide-react';
 
 export function SafetyView() {
   const { checkerDrugs, removeCheckerDrug, clearCheckerDrugs, addCheckerDrug, addToast } = useAppStore();

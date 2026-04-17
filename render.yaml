@@ -1,0 +1,20 @@
+# Render Blueprint Configuration
+services:
+  - type: web
+    name: drug-rag-backend
+    runtime: python
+    buildCommand: pip install -r backend/requirements.txt
+    startCommand: gunicorn -w 4 -k uvicorn.workers.UvicornWorker backend.api.main:app
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.0
+      - key: NEO4J_URI
+        sync: false
+      - key: NEO4J_USERNAME
+        sync: false
+      - key: NEO4J_PASSWORD
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ALLOWED_ORIGINS
+        sync: false

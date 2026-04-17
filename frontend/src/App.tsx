@@ -34,7 +34,7 @@ function App() {
 
   if (activeView === 'landing') {
     return (
-      <div className="h-full w-full bg-void overflow-hidden relative">
+      <div className="h-full w-full bg-void overflow-auto relative">
         <div className="scanline-overlay" />
         <LandingPage />
         <ToastContainer />

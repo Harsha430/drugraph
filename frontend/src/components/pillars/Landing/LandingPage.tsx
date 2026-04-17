@@ -42,7 +42,7 @@ const LandingPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#04080F] text-[#E2EEF6] overflow-y-auto font-body relative scroll-smooth">
+    <div className="w-full bg-[#04080F] text-[#E2EEF6] font-body relative scroll-smooth">
       {/* Background Decor */}
       <div className="fixed inset-0 pointer-events-none opacity-20 z-0">
         <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--accent-bio)] rounded-full blur-[120px] opacity-10" />

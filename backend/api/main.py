@@ -8,16 +8,17 @@ from backend.services.rag import get_qa_chain, get_vector_store, _init_rag
 
 app = FastAPI(title="Drug KG RAG API", version="1.0.0")
 
+import os
+
+# Configure Allowed Origins - Use environment variable for production
+allowed_origins = os.getenv(
+    "ALLOWED_ORIGINS", 
+    "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
+).split(",")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=[
-        "http://localhost:5173",
-        "https://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://127.0.0.1:5173",
-        "http://localhost:3000",
-        "http://127.0.0.1:8000",
-    ],
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

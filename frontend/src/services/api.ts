@@ -1,7 +1,7 @@
 import axios from 'axios';
 import type { Drug, GraphData, Message, SearchRequest } from '../types';
 
-const BASE_URL = 'http://127.0.0.1:8000';
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000';
 
 const client = axios.create({
   baseURL: BASE_URL,

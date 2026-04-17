@@ -11,10 +11,17 @@ app = FastAPI(title="Drug KG RAG API", version="1.0.0")
 import os
 
 # Configure Allowed Origins - Use environment variable for production
-allowed_origins = os.getenv(
-    "ALLOWED_ORIGINS", 
-    "http://localhost:5173,http://127.0.0.1:5173,http://localhost:3000"
-).split(",")
+origins_env = os.getenv("ALLOWED_ORIGINS", "")
+if origins_env:
+    allowed_origins = [o.strip() for o in origins_env.split(",") if o.strip()]
+else:
+    allowed_origins = [
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "http://localhost:3000"
+    ]
+
+print(f"INFO: Configured CORS origins: {allowed_origins}")
 
 app.add_middleware(
     CORSMiddleware,

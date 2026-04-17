@@ -7,7 +7,7 @@ class Settings(BaseSettings):
     neo4j_uri: str
     neo4j_username: str
     neo4j_password: str
-    neo4j_database: str = "neo4j"
+    neo4j_database: str = ""
 
     groq_api_key: str = ""
     groq_model: str = "llama-3.1-8b-instant"

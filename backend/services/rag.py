@@ -13,18 +13,22 @@ _llm: ChatGroq | None = None
 _rag_error: str | None = None
 
 
-def _init_rag() -> None:
-    global _vector_store, _qa_chain, _llm, _rag_error
-    if _vector_store is not None and _qa_chain is not None and _llm is not None:
-        return
     try:
+        # Debug connection info
+        print(f"INFO: Connecting to Neo4j URI: {settings.neo4j_uri}")
+        print(f"INFO: Using Database: {settings.neo4j_database or 'DEFAULT'}")
+        
         embeddings = get_embeddings()
+        
+        # Determine database name - Aura often prefers None/Empty for default
+        db_name = settings.neo4j_database if settings.neo4j_database and settings.neo4j_database != "neo4j" else None
+
         _vector_store = Neo4jVector.from_existing_graph(
             embedding=embeddings,
             url=settings.neo4j_uri,
             username=settings.neo4j_username,
             password=settings.neo4j_password,
-            database=settings.neo4j_database,
+            database=db_name,
             index_name=settings.vector_index_name,
             node_label=settings.vector_node_label,
             text_node_properties=[settings.vector_text_property],

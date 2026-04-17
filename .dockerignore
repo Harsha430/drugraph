@@ -1,0 +1,15 @@
+# Exclude from Leapcell/Docker Image
+fulldb.xml
+frontend/
+node_modules/
+.git/
+.vscode/
+conda_rag_env/
+datasets/
+drug_embeddings_cache.json
+*.xml
+*.json
+!backend/requirements.txt
+__pycache__/
+*.pyc
+.env

@@ -10,26 +10,23 @@ app = FastAPI(title="Drug KG RAG API", version="1.0.0")
 
 import os
 
-# Configure Allowed Origins - Use environment variable for production
-origins_env = os.getenv("ALLOWED_ORIGINS", "")
-if origins_env:
-    allowed_origins = [o.strip() for o in origins_env.split(",") if o.strip()]
-else:
-    allowed_origins = [
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "http://localhost:3000"
-    ]
+# Configure Allowed Origins - Using wildcard for debugging to unblock frontend
+allowed_origins = ["*"]
 
 print(f"INFO: Configured CORS origins: {allowed_origins}")
 
 app.add_middleware(
     CORSMiddleware,
     allow_origins=allowed_origins,
-    allow_credentials=True,
+    allow_credentials=False, # Must be False if using wildcard "*"
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+@app.get("/")
+def root():
+    return {"message": "Drug KG RAG API is running. Visit /health for status."}
 
 
 @app.on_event("startup")

@@ -2,6 +2,7 @@ import { useAppStore } from '../../store';
 import type { PillarView } from '../../types';
 
 const NAV_ITEMS: { id: PillarView; glyph: string; label: string; sublabel: string }[] = [
+  { id: 'landing', glyph: '⌂', label: 'HOME', sublabel: 'Landing System' },
   { id: 'search', glyph: '◈', label: 'SEARCH', sublabel: 'Semantic Discovery' },
   { id: 'assistant', glyph: '⬡', label: 'ASSISTANT', sublabel: 'RAG Chat' },
   { id: 'safety', glyph: '⚠', label: 'SAFETY CHECK', sublabel: 'Interaction Checker' },

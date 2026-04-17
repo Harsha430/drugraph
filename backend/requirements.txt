@@ -6,11 +6,11 @@ fastapi
 uvicorn[standard]
 python-dotenv
 pydantic-settings
-sentence-transformers
 langchain
 langchain-community
 langchain-groq
 langchain-neo4j
-langchain-huggingface
+onnxruntime
+transformers
 numpy
 gunicorn

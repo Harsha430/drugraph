@@ -1,11 +1,11 @@
 from backend.core.config import settings
 from langchain_neo4j import GraphCypherQAChain, Neo4jGraph, Neo4jVector
 from langchain_groq import ChatGroq
-from langchain_huggingface import HuggingFaceEmbeddings
+from backend.services.embeddings import ONNXEmbeddings
 
 # Local embedding model initialized with the model from settings
 def get_embeddings():
-    return HuggingFaceEmbeddings(model_name=settings.embedding_model)
+    return ONNXEmbeddings()
 
 _vector_store: Neo4jVector | None = None
 _qa_chain: GraphCypherQAChain | None = None

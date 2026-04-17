@@ -52,6 +52,7 @@ def _init_rag() -> None:
     except Exception as exc:
         import traceback
         _rag_error = traceback.format_exc()
+        print(f"CRITICAL: RAG Initialization failed: \n{_rag_error}")
         _vector_store = None
         _qa_chain = None
         _llm = None

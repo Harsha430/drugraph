@@ -3,9 +3,11 @@ from langchain_neo4j import GraphCypherQAChain, Neo4jGraph, Neo4jVector
 from langchain_groq import ChatGroq
 from backend.services.embeddings import ONNXEmbeddings
 
+
 # Local embedding model initialized with the model from settings
 def get_embeddings():
     return ONNXEmbeddings()
+
 
 _vector_store: Neo4jVector | None = None
 _qa_chain: GraphCypherQAChain | None = None
@@ -13,6 +15,10 @@ _llm: ChatGroq | None = None
 _rag_error: str | None = None
 
 
+def _init_rag() -> None:
+    global _vector_store, _qa_chain, _llm, _rag_error
+    if _vector_store is not None and _qa_chain is not None and _llm is not None:
+        return
     try:
         # Debug connection info
         print(f"INFO: Connecting to Neo4j URI: {settings.neo4j_uri}")
@@ -38,7 +44,7 @@ _rag_error: str | None = None
             url=settings.neo4j_uri,
             username=settings.neo4j_username,
             password=settings.neo4j_password,
-            database=settings.neo4j_database,
+            database=db_name,
         )
         _llm = ChatGroq(
             api_key=settings.groq_api_key,

@@ -9,6 +9,7 @@ export function SafetyView() {
   const [analysisTriggered, setAnalysisTriggered] = useState(false);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+  const [isExpanded, setIsExpanded] = useState(false);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 1024);
@@ -59,60 +60,92 @@ export function SafetyView() {
   return (
     <div 
       className="flex-1 flex overflow-hidden animate-fade-in"
-      style={{ flexDirection: isMobile ? 'column' : 'row' }}
+      style={{ flexDirection: isMobile ? 'column' : 'row', position: 'relative' }}
     >
-      {/* Left Panel: Selected Drugs */}
       <div
         style={{
           width: isMobile ? '100%' : 320,
           borderRight: isMobile ? 'none' : '1px solid var(--accent-dim)',
           borderBottom: isMobile ? '1px solid var(--accent-dim)' : 'none',
-          background: 'rgba(8, 14, 26, 0.4)',
+          background: isMobile ? 'var(--bg-surface)' : 'rgba(8, 14, 26, 0.4)',
           display: 'flex',
           flexDirection: 'column',
           padding: isMobile ? '12px 16px' : 20,
-          maxHeight: isMobile ? '35%' : '100%',
+          maxHeight: isMobile ? (isExpanded ? '60%' : '70px') : '100%',
+          transition: 'max-height 0.3s ease-in-out',
+          zIndex: 10,
+          overflow: 'hidden',
         }}
       >
-        <div className="flex justify-between items-end mb-6">
-          <div>
-            <h2
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 18,
-                color: 'var(--text-primary)',
-                letterSpacing: '0.05em',
-              }}
-            >
-              DRUG LIST
-            </h2>
-            <p
-              style={{
-                fontFamily: 'var(--font-mono)',
-                fontSize: 10,
-                color: 'var(--text-muted)',
-              }}
-            >
-              {checkerDrugs.length} COMPOUNDS SELECTED
-            </p>
+        <div className="flex justify-between items-center mb-4" style={{ height: isMobile ? 40 : 'auto' }}>
+          <div className="flex items-center gap-3">
+             {isMobile && (
+              <button 
+                onClick={() => setIsExpanded(!isExpanded)}
+                style={{ 
+                  background: 'none', 
+                  border: '1px solid var(--accent-dim)', 
+                  padding: '4px 8px', 
+                  borderRadius: 4,
+                  fontSize: 10,
+                  fontFamily: 'var(--font-mono)',
+                  color: 'var(--accent-bio)'
+                }}
+              >
+                {isExpanded ? '[-] HIDE' : '[+] LIST'}
+              </button>
+            )}
+            <div>
+              <h2
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: isMobile ? 12 : 18,
+                  color: 'var(--text-primary)',
+                  letterSpacing: '0.05em',
+                }}
+              >
+                DRUG LIST
+              </h2>
+              {!isMobile && (
+                <p
+                  style={{
+                    fontFamily: 'var(--font-mono)',
+                    fontSize: 10,
+                    color: 'var(--text-muted)',
+                  }}
+                >
+                  {checkerDrugs.length} COMPOUNDS SELECTED
+                </p>
+              )}
+            </div>
           </div>
-          {checkerDrugs.length > 0 && (
-            <button
-              onClick={clearCheckerDrugs}
-              style={{
-                background: 'none',
-                border: 'none',
-                color: 'var(--text-muted)',
-                fontSize: 10,
-                fontFamily: 'var(--font-mono)',
-                cursor: 'pointer',
-                textDecoration: 'underline',
-              }}
-            >
-              CLEAR ALL
-            </button>
-          )}
+          <div className="flex items-center gap-4">
+             {isMobile && checkerDrugs.length > 0 && (
+                <span style={{ fontFamily: 'var(--font-mono)', fontSize: 10, color: 'var(--accent-bio)' }}>
+                  ({checkerDrugs.length})
+                </span>
+             )}
+            {checkerDrugs.length > 0 && (
+              <button
+                onClick={clearCheckerDrugs}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  color: 'var(--text-muted)',
+                  fontSize: 10,
+                  fontFamily: 'var(--font-mono)',
+                  cursor: 'pointer',
+                  textDecoration: 'underline',
+                }}
+              >
+                {isMobile ? 'CLEAR' : 'CLEAR ALL'}
+              </button>
+            )}
+          </div>
         </div>
+
+        {(isExpanded || !isMobile) && (
+          <div className="flex-1 flex flex-col min-h-0">
 
         <div className="flex-1 overflow-y-auto space-y-2 pr-2">
           {checkerDrugs.map((drug) => (
@@ -199,33 +232,35 @@ export function SafetyView() {
           </button>
         )}
 
-        {/* SAFETY ENGINE TIP - Hide on mobile if list is long, or just always on mobile for space */}
-        {!isMobile && (
-          <div
-            style={{
-              marginTop: 16,
-              padding: 16,
-              background: 'var(--bg-elevated)',
-              border: '1px solid var(--accent-dim)',
-              borderRadius: 4,
-            }}
-          >
-            <div className="flex items-center gap-2 mb-2">
-              <ShieldCheck size={16} color="var(--accent-safe)" />
-              <span
+            {/* SAFETY ENGINE TIP - Hide on mobile if list is long, or just always on mobile for space */}
+            {!isMobile && (
+              <div
                 style={{
-                  fontFamily: 'var(--font-display)',
-                  fontSize: 11,
-                  color: 'var(--text-primary)',
+                  marginTop: 16,
+                  padding: 16,
+                  background: 'var(--bg-elevated)',
+                  border: '1px solid var(--accent-dim)',
+                  borderRadius: 4,
                 }}
               >
-                SAFETY ENGINE
-              </span>
-            </div>
-            <p style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-              Cross-referencing selected compounds against the Neo4j Knowledge Graph and
-              local medical descriptions.
-            </p>
+                <div className="flex items-center gap-2 mb-2">
+                  <ShieldCheck size={16} color="var(--accent-safe)" />
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: 11,
+                      color: 'var(--text-primary)',
+                    }}
+                  >
+                    SAFETY ENGINE
+                  </span>
+                </div>
+                <p style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+                  Cross-referencing selected compounds against the Neo4j Knowledge Graph and
+                  local medical descriptions.
+                </p>
+              </div>
+            )}
           </div>
         )}
       </div>
@@ -235,30 +270,32 @@ export function SafetyView() {
         className="flex-1 flex flex-col overflow-y-auto"
         style={{ padding: isMobile ? '16px 16px' : '32px' }}
       >
-        <div className="mb-8">
-          <div className="flex justify-between items-center">
-            <h1
+        {!isMobile && (
+          <div className="mb-8">
+            <div className="flex justify-between items-center">
+              <h1
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 24,
+                  color: 'var(--text-primary)',
+                  letterSpacing: '0.05em',
+                  marginBottom: 8,
+                }}
+              >
+                INTERACTION ANALYSIS
+              </h1>
+              {isFetching && <Loader2 className="animate-spin text-accent-bio" size={20} />}
+            </div>
+            <div
               style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: isMobile ? 18 : 24,
-                color: 'var(--text-primary)',
-                letterSpacing: '0.05em',
-                marginBottom: isMobile ? 4 : 8,
+                height: 1,
+                width: 60,
+                background: 'var(--accent-bio)',
+                marginBottom: 20,
               }}
-            >
-              INTERACTION ANALYSIS
-            </h1>
-            {isFetching && <Loader2 className="animate-spin text-accent-bio" size={20} />}
+            />
           </div>
-          <div
-            style={{
-              height: 1,
-              width: 60,
-              background: 'var(--accent-bio)',
-              marginBottom: isMobile ? 12 : 20,
-            }}
-          />
-        </div>
+        )}
 
         <div className="grid grid-cols-1 gap-6">
           {interactions.length > 0 ? (
@@ -430,17 +467,17 @@ export function SafetyView() {
                   gap: isMobile ? 12 : 24
                 }}
               >
-                <div style={{ position: 'relative' }}>
+                <div style={{ position: 'relative', transform: isMobile ? 'scale(0.8)' : 'none' }}>
                   <AlertTriangle size={64} color="var(--text-muted)" style={{ opacity: 0.2 }} />
                   <Activity size={24} color="var(--accent-bio)" style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)' }} />
                 </div>
                 
-                <div>
-                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: 16, color: 'var(--text-primary)', marginBottom: 8, letterSpacing: '0.05em' }}>
+                <div style={{ padding: isMobile ? '0 20px' : '0' }}>
+                  <h3 style={{ fontFamily: 'var(--font-display)', fontSize: isMobile ? 13 : 16, color: 'var(--text-primary)', marginBottom: 8, letterSpacing: '0.05em' }}>
                     AWAITING COMPOUND SELECTION
                   </h3>
-                  <p style={{ fontFamily: 'var(--font-body)', fontSize: 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
-                    Build a clinical profile by adding drugs from the <b>Search</b> results. The Safety Engine will automatically cross-reference interactions across the Knowledge Graph.
+                  <p style={{ fontFamily: 'var(--font-body)', fontSize: isMobile ? 11 : 13, color: 'var(--text-muted)', lineHeight: 1.6 }}>
+                    Build a clinical profile by adding drugs from the <b>Search</b> results.
                   </p>
                 </div>
 

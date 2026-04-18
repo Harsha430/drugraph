@@ -98,10 +98,15 @@ const LandingPage: React.FC = () => {
               Try a live query
               <ArrowRight className="w-4 h-4" />
             </button>
-            <button className="w-full sm:w-auto px-10 py-4 bg-white/5 hover:bg-white/10 text-[#E2EEF6] border border-white/10 rounded-sm font-mono text-xs tracking-[0.2em] transition-all flex items-center justify-center gap-2 uppercase">
+            <a 
+              href="https://github.com/Harsha430/drugraph"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-10 py-4 bg-white/5 hover:bg-white/10 text-[#E2EEF6] border border-white/10 rounded-sm font-mono text-xs tracking-[0.2em] transition-all flex items-center justify-center gap-2 uppercase"
+            >
               <Github className="w-4 h-4" />
               View on GitHub
-            </button>
+            </a>
           </motion.div>
 
           {/* Stats Bar */}
@@ -338,7 +343,12 @@ const LandingPage: React.FC = () => {
           DruGraph · Built with Neo4j + LangChain · Open source
         </div>
         <div className="flex items-center gap-10">
-          <a href="#" className="flex items-center gap-2 group">
+          <a 
+            href="https://github.com/Harsha430/drugraph" 
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center gap-2 group"
+          >
             <Github size={14} className="text-[#3A5570] group-hover:text-white transition-colors" />
             <span className="text-[10px] font-mono text-[#3A5570] group-hover:text-white transition-colors tracking-widest uppercase">GitHub</span>
           </a>

@@ -2,13 +2,26 @@ import { useState, useRef, useEffect } from 'react';
 import { useAppStore } from '../../../store';
 import { api } from '../../../services/api';
 import type { Message, SourceKnowledge } from '../../../types';
+import { Activity } from 'lucide-react';
 
 export function AssistantView() {
   const { chatHistory, addMessage, clearChat } = useAppStore();
   const [input, setInput] = useState('');
   const [isThinking, setIsThinking] = useState(false);
   const [currentSources, setCurrentSources] = useState<SourceKnowledge | null>(null);
+  const [showSources, setShowSources] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 1024);
+      if (window.innerWidth >= 1024) setShowSources(false);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -78,9 +91,9 @@ export function AssistantView() {
   return (
     <div
       className="animate-fade-in"
-      style={{ height: '100%', display: 'flex', overflow: 'hidden' }}
+      style={{ height: '100%', display: 'flex', flexDirection: isMobile ? 'column' : 'row', overflow: 'hidden' }}
     >
-      <div style={{ flex: '0 0 60%', display: 'flex', flexDirection: 'column', borderRight: '1px solid var(--accent-dim)' }}>
+      <div style={{ flex: isMobile ? '1' : '0 0 60%', display: 'flex', flexDirection: 'column', borderRight: isMobile ? 'none' : '1px solid var(--accent-dim)', overflow: 'hidden' }}>
         <div
           style={{
             padding: '16px 20px',
@@ -99,22 +112,42 @@ export function AssistantView() {
               RAG-augmented drug knowledge interface
             </div>
           </div>
-          <button
-            onClick={clearChat}
-            style={{
-              background: 'none',
-              border: '1px solid var(--accent-dim)',
-              borderRadius: 3,
-              padding: '4px 10px',
-              cursor: 'pointer',
-              fontFamily: 'var(--font-display)',
-              fontSize: 9,
-              color: 'var(--text-muted)',
-              letterSpacing: '0.1em',
-            }}
-          >
-            CLEAR
-          </button>
+          <div style={{ display: 'flex', gap: 6 }}>
+            {isMobile && currentSources && (
+              <button
+                onClick={() => setShowSources(!showSources)}
+                style={{
+                  background: 'none',
+                  border: '1px solid var(--accent-bio)',
+                  borderRadius: 3,
+                  padding: '4px 10px',
+                  cursor: 'pointer',
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 9,
+                  color: 'var(--accent-bio)',
+                  letterSpacing: '0.1em',
+                }}
+              >
+                SOURCES
+              </button>
+            )}
+            <button
+              onClick={clearChat}
+              style={{
+                background: 'none',
+                border: '1px solid var(--accent-dim)',
+                borderRadius: 3,
+                padding: '4px 10px',
+                cursor: 'pointer',
+                fontFamily: 'var(--font-display)',
+                fontSize: 9,
+                color: 'var(--text-muted)',
+                letterSpacing: '0.1em',
+              }}
+            >
+              CLEAR
+            </button>
+          </div>
         </div>
 
         <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -229,7 +262,13 @@ export function AssistantView() {
         </div>
       </div>
 
-      <SourcePanel sources={currentSources} />
+      {(!isMobile || showSources) && (
+        <SourcePanel 
+          sources={currentSources} 
+          isMobile={isMobile} 
+          onClose={() => setShowSources(false)} 
+        />
+      )}
     </div>
   );
 }
@@ -295,19 +334,45 @@ function ThinkingBubble() {
   );
 }
 
-function SourcePanel({ sources }: { sources: SourceKnowledge | null }) {
+function SourcePanel({ sources, isMobile, onClose }: { sources: SourceKnowledge | null; isMobile?: boolean; onClose?: () => void }) {
   return (
-    <div style={{ flex: '0 0 40%', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+    <div 
+      style={{ 
+        flex: isMobile ? 'none' : '0 0 40%', 
+        display: 'flex', 
+        flexDirection: 'column', 
+        overflow: 'hidden',
+        position: isMobile ? 'fixed' : 'relative',
+        top: 0,
+        left: 0,
+        width: isMobile ? '100%' : 'auto',
+        height: isMobile ? '100%' : 'auto',
+        background: 'var(--bg-surface)',
+        zIndex: isMobile ? 1100 : 1,
+      }}
+      className={isMobile ? "animate-slide-up" : ""}
+    >
       <div
         style={{
           padding: '16px 20px',
           borderBottom: '1px solid var(--accent-dim)',
           flexShrink: 0,
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
         }}
       >
         <div style={{ fontFamily: 'var(--font-display)', fontSize: 10, color: 'var(--text-muted)', letterSpacing: '0.16em' }}>
           [ SOURCE KNOWLEDGE ]
         </div>
+        {isMobile && (
+          <button 
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontFamily: 'var(--font-display)', fontSize: 10 }}
+          >
+            [ CLOSE ]
+          </button>
+        )}
       </div>
 
       <div style={{ flex: 1, overflowY: 'auto', padding: '16px 20px', display: 'flex', flexDirection: 'column', gap: 16 }}>

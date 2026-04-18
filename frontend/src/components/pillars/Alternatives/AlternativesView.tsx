@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Loader2, ShieldCheck, AlertTriangle, CheckCircle, Pill } from 'lucide-react';
 import { api } from '../../../services/api';
 import { useAppStore } from '../../../store';
@@ -12,6 +12,14 @@ export default function AlternativesView() {
   const [error, setError] = useState('');
   const [results, setResults] = useState<AlternativesResponse | null>(null);
   const { addToast } = useAppStore();
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const handleSearch = async () => {
     if (!drug.trim() || !condition.trim()) {
@@ -61,7 +69,7 @@ export default function AlternativesView() {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        padding: '24px 28px',
+        padding: isMobile ? '16px 12px' : '24px 28px',
         gap: 20,
         overflow: 'hidden',
       }}
@@ -86,10 +94,10 @@ export default function AlternativesView() {
             background: 'var(--bg-elevated)',
             border: '1px solid var(--accent-dim)',
             borderRadius: 6,
-            padding: 20,
+            padding: isMobile ? 12 : 20,
           }}
         >
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 16 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 16, marginBottom: 16 }}>
             <div>
               <label
                 style={{
@@ -364,14 +372,16 @@ export default function AlternativesView() {
                 <div
                   style={{
                     display: 'flex',
-                    alignItems: 'center',
-                    gap: 8,
-                    padding: '6px 14px',
-                    borderRadius: 20,
+                    flexDirection: isMobile ? 'column' : 'row',
+                    justifyContent: 'space-between',
+                    alignItems: isMobile ? 'start' : 'center',
+                    gap: isMobile ? 12 : 8,
+                    padding: isMobile ? '6px 14px' : '6px 14px',
+                    borderRadius: isMobile ? 8 : 20,
                     background: getConflictBg(alt.conflicts),
                     border: `1px solid ${getConflictColor(alt.conflicts)}`,
                     flexShrink: 0,
-                    marginLeft: 16,
+                    marginTop: isMobile ? 8 : 0,
                   }}
                 >
                   {alt.conflicts === 0 ? (

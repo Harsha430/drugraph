@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useAppStore } from './store';
 import { Sidebar } from './components/layout/Sidebar';
 import { TopBar } from './components/layout/TopBar';
@@ -14,6 +15,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 function App() {
   const { activeView } = useAppStore();
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const renderActiveView = () => {
     switch (activeView) {
@@ -49,9 +57,9 @@ function App() {
       
       <Sidebar />
       
-      <main className="flex-1 flex flex-col min-w-0 relative z-0">
+      <main className="flex-1 flex flex-col min-w-0 relative z-0 overflow-hidden">
         <TopBar />
-        <div className="flex-1 overflow-hidden flex flex-col">
+        <div className="flex-1 overflow-hidden flex flex-col relative">
           <AnimatePresence mode="wait">
             <motion.div
               key={activeView}

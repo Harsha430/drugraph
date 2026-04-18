@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useAppStore } from '../../store';
 import type { PillarView } from '../../types';
 
@@ -11,23 +12,49 @@ const NAV_ITEMS: { id: PillarView; glyph: string; label: string; sublabel: strin
 ];
 
 export function Sidebar() {
-  const { activeView, setActiveView, watchlist, removeFromWatchlist, checkerDrugs, removeCheckerDrug } = useAppStore();
+  const { 
+    activeView, 
+    setActiveView, 
+    watchlist, 
+    removeFromWatchlist, 
+    checkerDrugs, 
+    removeCheckerDrug,
+    mobileMenuOpen,
+    setMobileMenuOpen
+  } = useAppStore();
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  if (isMobile && !mobileMenuOpen) return null;
 
   return (
-    <aside
-      className="animate-slide-left"
-      style={{
-        width: 240,
-        minWidth: 240,
-        height: '100%',
-        background: 'var(--bg-surface)',
-        borderRight: '1px solid var(--accent-dim)',
-        display: 'flex',
-        flexDirection: 'column',
-        zIndex: 10,
-        flexShrink: 0,
-      }}
-    >
+    <>
+      {isMobile && mobileMenuOpen && (
+        <div 
+          onClick={() => setMobileMenuOpen(false)}
+          className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[100] animate-fade-in"
+        />
+      )}
+      <aside
+        className={isMobile ? "fixed top-0 left-0 h-full animate-slide-left z-[101]" : "animate-slide-left"}
+        style={{
+          width: 240,
+          minWidth: 240,
+          height: '100%',
+          background: 'var(--bg-surface)',
+          borderRight: '1px solid var(--accent-dim)',
+          display: 'flex',
+          flexDirection: 'column',
+          zIndex: isMobile ? 101 : 10,
+          flexShrink: 0,
+        }}
+      >
       <div
         style={{
           padding: '20px 16px 16px',
@@ -75,7 +102,10 @@ export function Sidebar() {
           return (
             <button
               key={item.id}
-              onClick={() => setActiveView(item.id)}
+              onClick={() => {
+                setActiveView(item.id);
+                if (isMobile) setMobileMenuOpen(false);
+              }}
               style={{
                 display: 'flex',
                 alignItems: 'center',
@@ -311,5 +341,6 @@ export function Sidebar() {
         </div>
       </div>
     </aside>
+  </>
   );
 }

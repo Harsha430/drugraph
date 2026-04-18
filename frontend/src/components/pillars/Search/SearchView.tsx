@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '../../../services/api';
 import { useAppStore } from '../../../store';
@@ -8,6 +8,14 @@ export function SearchView() {
   const [query, setQuery] = useState('');
   const [submittedQuery, setSubmittedQuery] = useState('');
   const { addToast } = useAppStore();
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const { data: results = [], isFetching } = useQuery({
     queryKey: ['search', submittedQuery],
@@ -33,7 +41,7 @@ export function SearchView() {
         height: '100%',
         display: 'flex',
         flexDirection: 'column',
-        padding: '24px 28px',
+        padding: isMobile ? '16px 12px' : '24px 28px',
         gap: 20,
         overflow: 'hidden',
       }}
@@ -107,9 +115,9 @@ export function SearchView() {
           <button
             onClick={handleSearch}
             className="btn-bio"
-            style={{ padding: '6px 16px', fontSize: 11, flexShrink: 0 }}
+            style={{ padding: isMobile ? '6px 12px' : '6px 16px', fontSize: 11, flexShrink: 0 }}
           >
-            QUERY
+            {isMobile ? 'GO' : 'QUERY'}
           </button>
         </div>
 
@@ -238,7 +246,7 @@ export function SearchView() {
               <div
                 style={{
                   display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                  gridTemplateColumns: isMobile ? '1fr' : 'repeat(auto-fit, minmax(200px, 1fr))',
                   gap: 12,
                   width: '100%',
                   maxWidth: 700,

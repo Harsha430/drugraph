@@ -15,6 +15,13 @@ export function GraphView() {
   const fgRef = useRef<any>();
   const containerRef = useRef<HTMLDivElement>(null);
   const [dimensions, setDimensions] = useState({ width: 800, height: 600 });
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
   const { 
     graphDepth, 
     setGraphDepth, 
@@ -103,7 +110,10 @@ export function GraphView() {
         <div className="w-full h-full" style={{ backgroundImage: 'radial-gradient(var(--accent-bio) 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
       </div>
 
-      <div className="absolute top-6 left-6 z-10 flex flex-col gap-4">
+      <div 
+        className="absolute z-10 flex flex-col gap-4"
+        style={{ top: isMobile ? 12 : 24, left: isMobile ? 12 : 24 }}
+      >
         {/* Connection Pulse */}
         <div className="flex items-center gap-3 px-4 py-2 bg-surface border border-accent-dim rounded-full shadow-lg">
           {isFetching ? <Loader2 size={14} className="text-accent-bio animate-spin" /> : <Activity size={14} className="text-accent-bio animate-pulse" />}
@@ -116,7 +126,7 @@ export function GraphView() {
         <div className="flex flex-col gap-1 p-3 bg-surface border border-accent-dim rounded-lg shadow-xl">
           <div className="flex items-center gap-2 mb-2 px-1">
             <Filter size={12} className="text-text-muted" />
-            <span className="font-display text-[9px] text-text-muted tracking-widest">ENTITY FILTERS</span>
+            <span className="font-display text-[9px] text-text-muted tracking-widest">{isMobile ? 'FILTERS' : 'ENTITY FILTERS'}</span>
           </div>
           {(['all', 'Drug', 'Target', 'Category'] as const).map((type) => (
             <button
@@ -162,8 +172,16 @@ export function GraphView() {
       </div>
 
       {/* Bottom Controls */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 flex items-center gap-4 px-6 py-3 bg-surface border border-accent-dim rounded-full shadow-2xl">
-        <div className="flex items-center gap-6 border-r border-accent-dim pr-6 mr-2">
+      <div 
+        className="absolute z-10 flex items-center gap-4 bg-surface border border-accent-dim rounded-full shadow-2xl"
+        style={{ 
+          bottom: isMobile ? 12 : 24, 
+          left: '50%', 
+          transform: 'translateX(-50%)',
+          padding: isMobile ? '8px 16px' : '12px 24px'
+        }}
+      >
+        <div className={`flex items-center gap-6 ${isMobile ? '' : 'border-r border-accent-dim pr-6 mr-2'}`}>
           <div className="flex flex-col gap-1">
             <span className="font-display text-[8px] text-text-muted tracking-widest text-center">SCAN DEPTH</span>
             <div className="flex items-center gap-2">
@@ -184,47 +202,51 @@ export function GraphView() {
           </div>
         </div>
 
-        <div className="flex items-center gap-4">
-          <button 
-            className="p-2 text-text-secondary hover:text-accent-bio transition-colors"
-            title="Zoom To Fit"
-            onClick={() => fgRef.current?.zoomToFit(400)}
-          >
-            <Maximize2 size={18} />
-          </button>
-          
-          <button 
-            className={`flex items-center gap-2 px-4 py-2 rounded font-display text-[11px] tracking-widest transition-all ${
-              pathfindMode 
-                ? 'bg-accent-warm text-void shadow-[0_0_15px_rgba(232,168,56,0.2)]'
-                : 'text-text-secondary hover:bg-white/5'
-            }`}
-            onClick={togglePathfindMode}
-          >
-            <MousePointer2 size={14} />
-            {pathfindMode ? 'PATHFINDING ON' : 'PATHFINDING OFF'}
-          </button>
-        </div>
+        {!isMobile && (
+          <div className="flex items-center gap-4">
+            <button 
+              className="p-2 text-text-secondary hover:text-accent-bio transition-colors"
+              title="Zoom To Fit"
+              onClick={() => fgRef.current?.zoomToFit(400)}
+            >
+              <Maximize2 size={18} />
+            </button>
+            
+            <button 
+              className={`flex items-center gap-2 px-4 py-2 rounded font-display text-[11px] tracking-widest transition-all ${
+                pathfindMode 
+                  ? 'bg-accent-warm text-void shadow-[0_0_15px_rgba(232,168,56,0.2)]'
+                  : 'text-text-secondary hover:bg-white/5'
+              }`}
+              onClick={togglePathfindMode}
+            >
+              <MousePointer2 size={14} />
+              {pathfindMode ? 'PATHFINDING ON' : 'PATHFINDING OFF'}
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Legend Overlay */}
-      <div className="absolute bottom-6 right-6 z-10 p-4 bg-surface border border-accent-dim rounded-lg shadow-xl max-w-[200px]">
-        <h4 className="font-display text-[10px] text-text-primary tracking-widest mb-3 border-b border-accent-dim pb-2">GRAPH LEGEND</h4>
-        <div className="space-y-3">
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-[rgba(255,69,96,1)] shadow-[0_0_8px_rgba(255,69,96,1)]" />
-            <span className="font-mono text-[9px] text-text-muted tracking-wider">COLLISION / INTERACTION</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-6 rounded-full bg-accent-bio/20 border-l-2 border-accent-bio" />
-            <span className="font-mono text-[9px] text-text-muted tracking-wider">DRUG NODE</span>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="w-1.5 h-1.5 rounded-full bg-accent-warm" />
-            <span className="font-mono text-[9px] text-text-muted tracking-wider">MOLECULAR TARGET</span>
+      {!isMobile && (
+        <div className="absolute bottom-6 right-6 z-10 p-4 bg-surface border border-accent-dim rounded-lg shadow-xl max-w-[200px]">
+          <h4 className="font-display text-[10px] text-text-primary tracking-widest mb-3 border-b border-accent-dim pb-2">GRAPH LEGEND</h4>
+          <div className="space-y-3">
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-[rgba(255,69,96,1)] shadow-[0_0_8px_rgba(255,69,96,1)]" />
+              <span className="font-mono text-[9px] text-text-muted tracking-wider">COLLISION / INTERACTION</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-6 rounded-full bg-accent-bio/20 border-l-2 border-accent-bio" />
+              <span className="font-mono text-[9px] text-text-muted tracking-wider">DRUG NODE</span>
+            </div>
+            <div className="flex items-center gap-3">
+              <div className="w-1.5 h-1.5 rounded-full bg-accent-warm" />
+              <span className="font-mono text-[9px] text-text-muted tracking-wider">MOLECULAR TARGET</span>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

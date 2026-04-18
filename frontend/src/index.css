@@ -158,3 +158,25 @@ input:focus, textarea:focus {
 .graph-canvas canvas { cursor: crosshair !important; }
 
 .right-drawer { animation: slideInRight 0.3s ease forwards; }
+
+/* Responsive Utilities */
+@media (max-width: 1024px) {
+  .mobile-hide { display: none !important; }
+  .mobile-stack { flex-direction: column !important; }
+  .mobile-w-full { width: 100% !important; }
+  .mobile-h-auto { height: auto !important; }
+}
+
+@media (max-width: 768px) {
+  .tablet-hide { display: none !important; }
+  .mobile-grid-1 { grid-template-columns: 1fr !important; }
+}
+
+@keyframes slideInUpMobile {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.mobile-drawer-up {
+  animation: slideInUpMobile 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

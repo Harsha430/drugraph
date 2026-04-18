@@ -8,6 +8,14 @@ export function SafetyView() {
   const { checkerDrugs, removeCheckerDrug, clearCheckerDrugs, addCheckerDrug, addToast } = useAppStore();
   const [analysisTriggered, setAnalysisTriggered] = useState(false);
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 1024);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 1024);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Reset trigger when drug list changes so stale results don't linger
   useEffect(() => {
     setAnalysisTriggered(false);
@@ -49,16 +57,21 @@ export function SafetyView() {
   };
 
   return (
-    <div className="flex-1 flex overflow-hidden animate-fade-in">
+    <div 
+      className="flex-1 flex overflow-hidden animate-fade-in"
+      style={{ flexDirection: isMobile ? 'column' : 'row' }}
+    >
       {/* Left Panel: Selected Drugs */}
       <div
         style={{
-          width: 320,
-          borderRight: '1px solid var(--accent-dim)',
+          width: isMobile ? '100%' : 320,
+          borderRight: isMobile ? 'none' : '1px solid var(--accent-dim)',
+          borderBottom: isMobile ? '1px solid var(--accent-dim)' : 'none',
           background: 'rgba(8, 14, 26, 0.4)',
           display: 'flex',
           flexDirection: 'column',
-          padding: 20,
+          padding: isMobile ? '12px 16px' : 20,
+          maxHeight: isMobile ? '35%' : '100%',
         }}
       >
         <div className="flex justify-between items-end mb-6">
@@ -186,45 +199,51 @@ export function SafetyView() {
           </button>
         )}
 
-        <div
-          style={{
-            marginTop: 16,
-            padding: 16,
-            background: 'var(--bg-elevated)',
-            border: '1px solid var(--accent-dim)',
-            borderRadius: 4,
-          }}
-        >
-          <div className="flex items-center gap-2 mb-2">
-            <ShieldCheck size={16} color="var(--accent-safe)" />
-            <span
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontSize: 11,
-                color: 'var(--text-primary)',
-              }}
-            >
-              SAFETY ENGINE
-            </span>
+        {/* SAFETY ENGINE TIP - Hide on mobile if list is long, or just always on mobile for space */}
+        {!isMobile && (
+          <div
+            style={{
+              marginTop: 16,
+              padding: 16,
+              background: 'var(--bg-elevated)',
+              border: '1px solid var(--accent-dim)',
+              borderRadius: 4,
+            }}
+          >
+            <div className="flex items-center gap-2 mb-2">
+              <ShieldCheck size={16} color="var(--accent-safe)" />
+              <span
+                style={{
+                  fontFamily: 'var(--font-display)',
+                  fontSize: 11,
+                  color: 'var(--text-primary)',
+                }}
+              >
+                SAFETY ENGINE
+              </span>
+            </div>
+            <p style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.5 }}>
+              Cross-referencing selected compounds against the Neo4j Knowledge Graph and
+              local medical descriptions.
+            </p>
           </div>
-          <p style={{ fontSize: 10, color: 'var(--text-muted)', lineHeight: 1.5 }}>
-            Cross-referencing selected compounds against the Neo4j Knowledge Graph and
-            local medical descriptions.
-          </p>
-        </div>
+        )}
       </div>
 
       {/* Right Panel: Results */}
-      <div className="flex-1 flex flex-col p-8 overflow-y-auto">
+      <div 
+        className="flex-1 flex flex-col overflow-y-auto"
+        style={{ padding: isMobile ? '16px 16px' : '32px' }}
+      >
         <div className="mb-8">
           <div className="flex justify-between items-center">
             <h1
               style={{
                 fontFamily: 'var(--font-display)',
-                fontSize: 24,
+                fontSize: isMobile ? 18 : 24,
                 color: 'var(--text-primary)',
                 letterSpacing: '0.05em',
-                marginBottom: 8,
+                marginBottom: isMobile ? 4 : 8,
               }}
             >
               INTERACTION ANALYSIS
@@ -236,7 +255,7 @@ export function SafetyView() {
               height: 1,
               width: 60,
               background: 'var(--accent-bio)',
-              marginBottom: 20,
+              marginBottom: isMobile ? 12 : 20,
             }}
           />
         </div>
@@ -397,7 +416,10 @@ export function SafetyView() {
               </p>
             </div>
           ) : (
-            <div className="flex-1 flex flex-col items-center justify-center py-20 animate-fade-in">
+            <div 
+              className="flex-1 flex flex-col items-center justify-center animate-fade-in"
+              style={{ padding: isMobile ? '20px 0' : '80px 0' }}
+            >
               <div 
                 style={{ 
                   textAlign: 'center', 
@@ -405,7 +427,7 @@ export function SafetyView() {
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: 24
+                  gap: isMobile ? 12 : 24
                 }}
               >
                 <div style={{ position: 'relative' }}>

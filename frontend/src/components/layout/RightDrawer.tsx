@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useAppStore } from '../../store';
 import { api } from '../../services/api';
@@ -5,6 +6,14 @@ import { X, Activity, Beaker, ShieldAlert, Target, Info, Loader2 } from 'lucide-
 
 export function RightDrawer() {
   const { activeDrug, rightDrawerOpen, closeRightDrawer, addToWatchlist, addCheckerDrug, setActiveView, addToast } = useAppStore();
+
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const { data: details, isLoading } = useQuery({
     queryKey: ['drug', activeDrug?.id],
@@ -30,11 +39,11 @@ export function RightDrawer() {
         position: 'fixed',
         top: 0,
         right: 0,
-        width: 380,
+        width: isMobile ? '100%' : 380,
         height: '100%',
         background: 'var(--bg-surface)',
         borderLeft: '1px solid var(--accent-dim)',
-        zIndex: 100,
+        zIndex: 1000,
         display: 'flex',
         flexDirection: 'column',
         boxShadow: '-8px 0 40px rgba(0,0,0,0.5)',
@@ -118,7 +127,7 @@ export function RightDrawer() {
         </Section>
 
         <Section label="PHARMACOKINETICS" icon={<Beaker size={12} />}>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 8 }}>
+          <div style={{ display: 'grid', gridTemplateColumns: isMobile ? '1fr' : '1fr 1fr', gap: 8 }}>
             {[
               { label: 'HALF-LIFE', value: drug.halfLife },
               { label: 'BIOAVAILABILITY', value: drug.bioavailability },

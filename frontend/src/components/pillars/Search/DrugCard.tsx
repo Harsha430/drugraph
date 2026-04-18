@@ -1,3 +1,4 @@
+import { useState, useEffect } from 'react';
 import type { Drug } from '../../../types';
 import { useAppStore } from '../../../store';
 import { Activity, ShieldAlert, Binary, Target, BookmarkPlus } from 'lucide-react';
@@ -17,6 +18,14 @@ const STATUS_COLORS: Record<string, string> = {
 export function DrugCard({ drug, style }: DrugCardProps) {
   const { openRightDrawer, addToWatchlist, watchlist, setActiveView, addToast, addCheckerDrug, checkerDrugs } = useAppStore();
 
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => setIsMobile(window.innerWidth < 768);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const isAnalyzed = checkerDrugs.includes(drug.name);
   const isWatched = watchlist.some(d => d.name === drug.name || d.id === drug.id);
 
@@ -24,7 +33,7 @@ export function DrugCard({ drug, style }: DrugCardProps) {
     <div
       className="card card-sweep animate-fade-in-up"
       style={{
-        padding: '16px 20px',
+        padding: isMobile ? '12px 16px' : '16px 20px',
         cursor: 'pointer',
         position: 'relative',
         display: 'flex',
@@ -109,7 +118,8 @@ export function DrugCard({ drug, style }: DrugCardProps) {
           paddingTop: 12,
           borderTop: '1px solid var(--accent-dim)',
           display: 'flex',
-          justifyContent: 'flex-end',
+          flexWrap: 'wrap',
+          justifyContent: isMobile ? 'center' : 'flex-end',
           gap: 6,
         }}
         onClick={(e) => e.stopPropagation()}

@@ -11,6 +11,7 @@ interface AppState {
   pathfindMode: boolean;
   pathfindSelection: [string | null, string | null];
   rightDrawerOpen: boolean;
+  mobileMenuOpen: boolean;
   toasts: Toast[];
 
   setActiveView: (view: PillarView) => void;
@@ -29,6 +30,7 @@ interface AppState {
   setPathfindSelection: (selection: [string | null, string | null]) => void;
   addToast: (message: string, type?: Toast['type']) => void;
   removeToast: (id: string) => void;
+  setMobileMenuOpen: (open: boolean) => void;
 }
 
 export const useAppStore = create<AppState>((set, get) => ({
@@ -41,6 +43,7 @@ export const useAppStore = create<AppState>((set, get) => ({
   pathfindMode: false,
   pathfindSelection: [null, null],
   rightDrawerOpen: false,
+  mobileMenuOpen: false,
   toasts: [],
 
   setActiveView: (view) => set({ activeView: view }),
@@ -99,4 +102,6 @@ export const useAppStore = create<AppState>((set, get) => ({
 
   removeToast: (id) =>
     set((state) => ({ toasts: state.toasts.filter((t) => t.id !== id) })),
+
+  setMobileMenuOpen: (open) => set({ mobileMenuOpen: open }),
 }));

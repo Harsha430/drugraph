@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { useAppStore } from '../../store';
 import { useAnimatedCounter } from '../../hooks/useAnimatedCounter';
 import { Menu } from 'lucide-react';
+import type { PillarView } from '../../types';
 
 const VIEW_LABELS: Record<string, string[]> = {
   search: ['DRUGGRAPH', 'SEMANTIC DISCOVERY'],
@@ -96,7 +97,7 @@ export function TopBar() {
         )}
 
         <div style={{ display: 'flex', gap: 4 }}>
-          {((isMobile ? ['search', 'assistant'] : ['search', 'assistant', 'safety', 'graph']) as const).map((view) => (
+          {(isMobile ? (['search', 'assistant'] as PillarView[]) : (['search', 'assistant', 'safety', 'graph'] as PillarView[])).map((view) => (
             <button
               key={view}
               onClick={() => setActiveView(view)}
